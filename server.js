@@ -7,7 +7,7 @@ const pool = require("./config/queries.js")
 const middleware = require("./middlewareFunctions/middleware.js")
 
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+
 app.use(morgan("dev"))
 
 const envelopes = require("./routes/envelopes")
