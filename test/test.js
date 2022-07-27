@@ -117,10 +117,10 @@ describe("Envelope", () => {
                 get("/envelopes/50")
 
 
-            console.log(`ID: ${testRes}`)
-            assert.equal(testRes.text.id, 50)
-            assert.equal(testRes.name, "test")
-            assert.equal(moneyParser(testRes.budget), 5000)
+            console.log(`ID: ${JSON.parse(testRes.text)}`)
+            assert.equal(JSON.parse(testRes.text)[0].id, 50)
+            assert.equal(JSON.parse(testRes.text)[0].name, "test")
+            assert.equal(moneyParser(JSON.parse(testRes.text)[0].budget), 1000)
 
             const deleteRes = await req(app).
                 delete("/envelopes/50")
