@@ -13,7 +13,7 @@ const getEnvelopes = (req, res) => {
 
 const createEnvelope = (req, res) => {
     const { id, name, budget } = req.body
-    console.log(id)
+
     pool.query('INSERT INTO envelope.envelopes(id, name, budget) VALUES ($1, $2, $3) RETURNING *', [id, name, budget], (error, results) => {
         if (error) {
             throw error
@@ -35,7 +35,7 @@ const transferBudget = async (req, res) => {
                 resolve(results);
             }
         }))
-        console.log(results)
+
         return results.rows
 
     }

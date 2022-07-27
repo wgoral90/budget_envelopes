@@ -117,7 +117,7 @@ describe("Envelope", () => {
                 get("/envelopes/50")
 
 
-            console.log(`ID: ${JSON.parse(testRes.text)}`)
+
             assert.equal(JSON.parse(testRes.text)[0].id, 50)
             assert.equal(JSON.parse(testRes.text)[0].name, "test")
             assert.equal(moneyParser(JSON.parse(testRes.text)[0].budget), 1000)
@@ -125,11 +125,153 @@ describe("Envelope", () => {
             const deleteRes = await req(app).
                 delete("/envelopes/50")
         })
+        it("sends 201 status if request is correct", async () => {
+
+            const res = await req(app).
+                post("/envelopes").
+                send({
+                    id: '50',
+                    name: 'test',
+                    budget: '1000'
+                })
+
+
+
+
+            assert.equal(res.status, 201)
+
+            const deleteRes = await req(app).
+                delete("/envelopes/50")
+        })
+        it("sends 400 status if request is in correct", async () => {
+
+            const res = await req(app).
+                post("/envelopes").
+                send({
+                    id: 'hhh',
+                    name: 'test',
+                    budget: '1000'
+                })
+
+
+
+
+            assert.equal(res.status, 400)
+
+
+        })
+    })
+    describe("PUT", () => {
+        it("correctly transfer budget", async () => {
+            const testResOne = await req(app).
+                post("/envelopes").
+                send({
+                    id: '50',
+                    name: 'test',
+                    budget: '1000'
+                })
+            const testResTwo = await req(app).
+                post("/envelopes").
+                send({
+                    id: '51',
+                    name: 'test',
+                    budget: '1000'
+                })
+
+
+            const res = await req(app).
+                put("/envelopes").
+                send({
+                    startId: "50",
+                    destId: "51",
+                    budget: "500"
+                })
+
+            const testGetRes = await req(app).
+                get("/envelopes/50")
+
+            const testGetResTwo = await req(app).
+                get("/envelopes/51")
+
+            assert.equal(JSON.parse(testGetRes.text)[0].budget, "500,00 zł")
+            assert.equal(moneyParser(JSON.parse(testGetResTwo.text)[0].budget), 1500)
+
+            const deleteRes = await req(app).
+                delete("/envelopes/50")
+
+            const deleteResTwo = await req(app).
+                delete("/envelopes/51")
+
+
+        })
+    })
+})
+describe("envelope/:ID", () => {
+    describe("PUT", () => {
+        it("correctly changes parmeters", async () => {
+            const postRes = await req(app).
+                post("/envelopes").
+                send({
+                    id: '50',
+                    name: 'test',
+                    budget: '1000'
+                })
+            const res = await req(app).
+                put("/envelopes/50").
+                send({
+                    name: "test2",
+                    budget: "500"
+                })
+            const testGetRes = await req(app).
+                get("/envelopes/50")
+
+            assert.equal(JSON.parse(testGetRes.text)[0].budget, "500,00 zł")
+            assert.equal(JSON.parse(testGetRes.text)[0].name, "test2")
+
+            const deleteRes = await req(app).
+                delete("/envelopes/50")
+        })
+    })
+    describe("DELETE", () => {
+        it("successfuly deletes envelope", async () => {
+            const postRes = await req(app).
+                post("/envelopes").
+                send({
+                    id: '50',
+                    name: 'test',
+                    budget: '1000'
+                })
+            const res = await req(app).
+                delete("/envelopes/50")
+
+            const testGetRes = await req(app).
+                get("/envelopes/50")
+
+            assert.equal(testGetRes.text, "[]")
+
+
+        })
+    })
+    describe("GET", () => {
+        it("succesfully retrieves one envelope", async () => {
+            const postRes = await req(app).
+                post("/envelopes").
+                send({
+                    id: '50',
+                    name: 'test',
+                    budget: '500'
+                })
+
+            const res = await req(app).
+                get("/envelopes/50")
+
+            assert.equal(JSON.parse(res.text)[0].budget, "500,00 zł")
+            assert.equal(JSON.parse(res.text)[0].id, 50)
+            assert.equal(JSON.parse(res.text)[0].name, "test")
+
+            const deleteRes = await req(app).
+                delete("/envelopes/50")
+        })
     })
 })
 
-
-/*it("throws error if body.params are empty", async ()=>{
-    req(app).
-    get("/envelopes")
-*/
